@@ -1,0 +1,168 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Add styles for the body to set the background color to black */
+        body {
+            
+            color: #fff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Style the container */
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            background-color: #333;
+        }
+
+        /* Style the form heading */
+        h2 {
+            color: #fff;
+        }
+
+        /* Style form elements */
+        .form-group {
+            margin: 10px 0;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #777;
+            border-radius: 5px;
+            background-color: #444;
+            color: #fff;
+        }
+
+        .radio-input {
+            margin-right: 10px;
+        }
+
+        .select-field {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #777;
+            border-radius: 5px;
+            background-color: #444;
+            color: #fff;
+        }
+
+        .checkbox-input {
+            margin-right: 10px;
+        }
+
+        .submit-button {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .message {
+            color: #ff6b6b;
+        }
+
+        .return-link {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        .return-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <h2>User Dashboard</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" name="name" placeholder="Name" class="input-field">
+            </div>
+            <div class="form-group">
+                <input type="date" name="dob" placeholder="DOB" class="input-field">
+            </div>
+            <div class="form-group">
+                <input type="number" name="age" placeholder="Age" class="input-field">
+            </div>
+            <div class="form-group">
+                <label>Gender:</label>
+                <input type="radio" name="gender" value="Male" class="radio-input"> Male
+                <input type="radio" name="gender" value="Female" class="radio-input"> Female
+            </div>
+            <div class="form-group">
+                <input type="tel" name="phone_number" placeholder="Phone Number" class="input-field">
+            </div>
+            <div class="form-group">
+                <input type="email" name="email" placeholder="Email" class="input-field">
+            </div>
+            <div class="form-group">
+                <textarea name="address" placeholder="Address" class="input-field"></textarea>
+            </div>
+            <div class="form-group">
+                <select name="department" id="id_department" class="select-field">
+                    <option value="" disabled selected>Select Department</option>
+                    {% for department in departments %}
+                        <option value="{{ department.id }}">{{ department.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <select name="course" id="id_course" class="select-field">
+                    <option value="" disabled selected>Select Course</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <select name="purpose" class="select-field">
+                    <option value="Enquiry">Enquiry</option>
+                    <option value="Place Order">Place Order</option>
+                    <option value="Return">Return</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Materials provide:</label>
+                <input type="checkbox" name="materials" value="Note Book" class="checkbox-input"> Note Book
+                <input type="checkbox" name="materials" value="Pen" class="checkbox-input"> Pen
+                <input type="checkbox" name="materials" value="Exam Papers" class="checkbox-input"> Exam Papers
+                <input type="checkbox" name="materials" value="text book" class="checkbox-input"> text book
+            </div>
+            <div class="form-group">
+                <button type="submit" class="submit-button">Submit</button>
+            </div>
+        </form>
+        {% if message %}
+            <p class="message">{{ message }}</p>
+        {% endif %}
+        <a href="{% url 'home' %}" class="return-link">Return to Home</a>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#id_department').change(function () {
+                var department_id = $(this).val();
+                $.ajax({
+                    url: '{% url 'get_courses' %}',
+                    data: {'department_id': department_id},
+                    success: function (data) {
+                        $('#id_course').html(data.course_options);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
